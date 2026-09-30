@@ -75,11 +75,14 @@ jobs:
           EOF
           rm -f source.enc
 
+      # cryptography only from a ready-made build: one compiled here links to
+      # Homebrew's OpenSSL, which the bundled app can't load.
       - name: Install
         working-directory: app
         run: |
           $PY -m pip install --quiet --upgrade pip
-          $PY -m pip install --quiet -r requirements.txt pyinstaller pillow
+          $PY -m pip install --quiet --only-binary cryptography -r requirements.txt pyinstaller pillow
+          $PY -c "import cryptography; print('cryptography', cryptography.__version__)"
 
       - name: Build
         working-directory: app
